@@ -41,9 +41,9 @@ TOKEN_CUSHION = 300 # Don't use the full max tokens to avoid hitting the limit
 OPENAI_COMPLETION_MODEL = config.get("OPENAI_COMPLETION_MODEL", default="gpt-4o-mini", cast=str)
 OPENAI_EMBEDDING_MODEL = config.get("OPENAI_EMBEDDING_MODEL", default="text-embedding-3-small", cast=str)
 OPENAI_MAX_TOKENS = 12000  # Maximum allowed tokens for OpenAI API
-DEFAULT_LOCAL_MODEL_NAME = "Llama-3.1-8B-Lexi-Uncensored_Q5_fixedrope.gguf"
-LOCAL_LLM_CONTEXT_SIZE_IN_TOKENS = 2048
-USE_VERBOSE = False
+DEFAULT_LOCAL_MODEL_NAME = "Phi-3-mini-4k-instruct-q4.gguf"
+LOCAL_LLM_CONTEXT_SIZE_IN_TOKENS = 4096
+USE_VERBOSE = True
 
 openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -71,7 +71,7 @@ def is_gpu_available():
 # Model Download
 async def download_models() -> Tuple[List[str], List[Dict[str, str]]]:
     download_status = []    
-    model_url = "https://huggingface.co/Orenguteng/Llama-3.1-8B-Lexi-Uncensored-GGUF/resolve/main/Llama-3.1-8B-Lexi-Uncensored_Q5_fixedrope.gguf"
+    model_url = "https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf/blob/main/Phi-3-mini-4k-instruct-q4.gguf"
     model_name = os.path.basename(model_url)
     current_file_path = os.path.abspath(__file__)
     base_dir = os.path.dirname(current_file_path)
@@ -419,6 +419,8 @@ def convert_pdf_to_images(input_pdf_file_path: str, max_pages: int = 0, skip_fir
         last_page = skip_first_n_pages + max_pages
         logging.info(f"Converting pages {skip_first_n_pages + 1} to {last_page}")
     first_page = skip_first_n_pages + 1  # pdf2image uses 1-based indexing
+    
+    print(input_pdf_file_path)
     images = convert_from_path(input_pdf_file_path, first_page=first_page, last_page=last_page)
     logging.info(f"Converted {len(images)} pages from PDF file to images.")
     return images
